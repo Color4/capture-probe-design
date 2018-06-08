@@ -31,11 +31,11 @@ colnames = ["qseqid", "sseqid", "pident",
 # Which species is being processed? Entered as command line argument.
 species = sys.argv[1]
 
-# Load in blastresults as pandas DataFrame.
-ProteinBlast = pd.read_table("../../data-raw/010_blastx/{0}/Nagy_transcriptome_ProteinBlast.csv".format(species), names=colnames)
+# Load in blast results as pandas DataFrame.
+proteinBlast_results = pd.read_table("../../data-raw/010_blastx/{0}/Nagy_transcriptome_ProteinBlast.csv".format(species), names=colnames)
 
 # Filter blastx results
-ProteinBlast_filtered = filter_proteinBlast(ProteinBlast)
+ProteinBlast_filtered = filter_proteinBlast(proteinBlast_results)
 
 # Write filtered blastx results to clean data folder.
 ProteinBlast_filtered.to_csv("../../data-clean/010_blastx/{0}/Nagy_transcriptome_ProteinBlast_Filtered.csv".format(species), header=colnames, index = False)
