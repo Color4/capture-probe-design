@@ -17,7 +17,7 @@ def get_protein_sequences(accession_numbers, species):
     """
 
     # Open fasta file.
-    protein_sequences = open("../../data-raw/011_retrieve-proteins/{0}/M-truncatula_ProteinSeqs.fasta".format(species), 'w')
+    protein_sequences = open("../../data-raw/021_retrieve-proteins/{0}/M-truncatula_ProteinSeqs.fasta".format(species), 'w')
 
     # Retrieve amino acid sequence for each subject sequence in list and write to fasta
     for ID in accession_numbers:
@@ -32,7 +32,7 @@ def get_protein_sequences(accession_numbers, species):
 species = sys.argv[1]
 
 # Load subject ID's (i.e. accession numbers) from dataframe with filtered blastx results
-ProteinBlast_filtered = pd.read_csv("../../data-clean/010_blastx/{0}/Nagy_transcriptome_ProteinBlast_Filtered.csv".format(species), usecols = ["sseqid"])
+ProteinBlast_filtered = pd.read_csv("../../data-clean/020_blastx/{0}/Nagy_transcriptome_ProteinBlast_Filtered.csv".format(species), usecols = ["sseqid"])
 
 # Extract list of subject accession numbers to query against NCBI Entrez
 accession_numbers = list(ProteinBlast_filtered)
