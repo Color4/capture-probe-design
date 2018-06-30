@@ -18,6 +18,9 @@ def filter_proteinBlast(blast_results):
     # If query sequence has multiple hits, keep only the longest alignment
     filtered = filtered.sort_values('length', ascending=False).drop_duplicates(['qseqid'])
 
+    # If subject sequence is duplicated, keep the longest. This prevents duplicate sequences from appearing in the protein sequence files and provides the longest alignment between the T. repens transcript and its homologous protein sequence in a closely related species.
+    filtered = filtered.sort_values('length', ascending=False).drop_duplicates(['sseqid'])
+
     return(filtered)
 
 
