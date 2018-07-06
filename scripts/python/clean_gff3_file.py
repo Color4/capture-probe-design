@@ -6,7 +6,7 @@ sys.path.append("/home/santang3/.local/lib/python2.7/site-packages/")
 import gffutils
 
 
-def remove_gff3_duplicates(species):
+def clean_gff3_file(path_to_raw_gff3, path_to_clean_gff3):
     """Remove genes and children from gff3
 
     Removes genes and children if the same protein mapped to multiple
@@ -21,10 +21,10 @@ def remove_gff3_duplicates(species):
     """
 
     # Open raw gff3 database
-    gff3_database = gffutils.FeatureDB("../../data-raw/030_exonerate_p2g/{0}/Nagy_transcriptome_p2g.db".format(species))
+    gff3_database = gffutils.FeatureDB(path_to_raw_gff3)
 
     # Open gff3 file to which unique feature will be written
-    clean_gff3 = "../../data-clean/030_exonerate_p2g/{0}/Nagy_transcriptome_p2g.gff3".format(species)
+    clean_gff3 = path_to_clean_gff3
 
     # Create list with duplicates
     duplicates = [feature.id for feature in gff3_database.features_of_type("gene") if len(feature.id.split(".")) != 2]
@@ -35,35 +35,34 @@ def remove_gff3_duplicates(species):
             if feature.featuretype == "gene":
                 if feature.id not in duplicates:
                     f.write(str(feature) + '\n')
-                    for child in gff3_database.children(id = feature.id, order_by = "start"):
+                    i = 1
+                    for child in gff3_database.children(id = feature.id,
+                                                        order_by = "start", featuretype = "cds"):
+                        child.id = "cds" + "_" + str(i)
                         f.write(str(child) + '\n')
-
-def create_gff3_database(species, data_state):
-    """Create gff3 database from gff3 annotation file
-
-    Args:
-        species ('str'): Species for which to extract features from the gff3 file.
-        data_state ('str'): One of "raw" or "clean", specifying the state of the gff3 file.
-
-    Returns:
-        None: Writes gff3 database to disk.
-    """
-
-    # Specify paths
-    gff3_file = "../../data-{0}/030_exonerate_p2g/{1}/Nagy_transcriptome_p2g.gff3".format(data_state, species)
-    database_file = "../../data-{0}/030_exonerate_p2g/{1}/Nagy_transcriptome_p2g.db".format(data_state, species)
-
-    # Create database
-    gffutils.create_db(gff3_file, dbfn=database_file, force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
+                        i += 1
+                    i = 1
+                    for child in gff3_database.children(id = feature.id,
+                                                        order_by = "start", featuretype = "intron"):
+                        child.id = "intron" + "_" + str(i)
+                        f.write(str(child) + '\n')
+                        i += 1
+                    i = 1
+                    for child in gff3_database.children(id = feature.id,
+                                                        order_by = "start", featuretype = "splice_donor"):
+                        child.id = "splice_donor" + "_" + str(i)
+                        f.write(str(child) + '\n')
+                        i += 1
+                    i = 1
+                    for child in gff3_database.children(id = feature.id,
+                                                        order_by = "start", featuretype = "splice_acceptor"):
+                        child.id = "splice_acceptor" + "_" + str(i)
+                        f.write(str(child) + '\n')
+                        i += 1
 
 
 if __name__ == "__main__":
-    species = sys.argv[1]
-    print("Creating gff3 database from raw annotation file")
-    create_gff3_database(species, "raw")  # Create database from raw gff3
+    path_to_raw_gff3 = sys.argv[1]
+    path_to_clean_gff3 = sys.argv[2]
+    clean_gff3_file(path_to_raw_gff3, path_to_clean_gff3)
 
-    print("Removing duplicates from raw gff3 annotation file")
-    remove_gff3_duplicates(species)  # Remove duplicates from raw database and gff3 file
-
-    print("Creating gff3 database from clean annotation file")
-    create_gff3_database(species, "clean")  # Create database from clean fatabase
