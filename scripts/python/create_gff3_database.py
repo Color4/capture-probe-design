@@ -28,8 +28,9 @@ def create_gff3_database(path_to_gff3, data_quality):
 
     # Create database in same directory (default)
     gffutils.create_db(gff3_file, dbfn=database_file,
-                       force=True, keep_order=True,
-                       merge_strategy='merge', sort_attribute_values=True)
+                       force=True, keep_order=False,
+                       id_spec = 'ID', verbose = True,
+                       merge_strategy='merge', sort_attribute_values=False)
 
 
 if __name__ == "__main__":
